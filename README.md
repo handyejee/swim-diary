@@ -29,4 +29,10 @@
     - 사용자에게 오늘의 운동기분을 작성할 시간이에요 알림을 통해 회고 작성을 독려한다.
 
 ## ERD
-![ERD](./src/main/resources/static/images/pool_erd.png)
+![ERD](./src/main/resources/static/images/swim_erd.png)
+
+## Trouble Shooting
+TBD
+
+## Tech Stack
+TBD
