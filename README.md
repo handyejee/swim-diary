@@ -26,7 +26,7 @@
         - 그 외에 작성하고 싶은 내용이 있다면 입력할 수 있도록 제공 (텍스트)
     - 기록 수정, 삭제 기능
         - 사용자는 작성한 기록을 수정하고 삭제할 수 있다.
-    - 모든 기록은 TIMESTAMP 형태로 저장 일시가 자동 저장된다.
+    - 모든 기록은 DATE 형태로 저장 일시가 자동 저장된다.
 - 운동 감정기록 모아보기 기능 (리포트 기능)
     - 사용자는 해당 월의 운동 감정별 기록을 조회할 수 있다.
     - 감정 기록 모아보기를 했을때 한달 기준 최대 31개의 데이터가 조회된다.
@@ -64,7 +64,7 @@ sequenceDiagram
 
 ## ERD
 
-![ERD](./src/main/resources/static/images/swim_erd_v3.png)
+![ERD](./src/main/resources/static/images/swim_erd_v4.png)
 
 ## WBS
 
