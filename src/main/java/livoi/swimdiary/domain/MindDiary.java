@@ -57,9 +57,8 @@ public class MindDiary {
   private LocalDate deletedAt;
 
   @Builder
-  public MindDiary(Long diaryId, Users users, String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate createdAt, LocalDate modifiedAt, LocalDate deletedAt){
+  public MindDiary(Users users, String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate createdAt, LocalDate modifiedAt, LocalDate deletedAt){
     this.users = users;
-    this.diaryId = diaryId;
     this.workoutMood = workoutMood;
     this.workoutType = workoutType;
     this.workoutCount = workoutCount;

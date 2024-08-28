@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import livoi.swimdiary.domain.MindDiary;
 import livoi.swimdiary.domain.Users;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 public class AddMindDiaryRequest {
 
   private Long diaryId;
@@ -29,7 +31,6 @@ public class AddMindDiaryRequest {
 
   public MindDiary toEntity(){
     return MindDiary.builder()
-        .diaryId(diaryId)
         .users(users)
         .workoutMood(workoutMood)
         .workoutType(workoutType)
