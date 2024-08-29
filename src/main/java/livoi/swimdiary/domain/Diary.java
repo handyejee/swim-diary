@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MindDiary {
+public class Diary {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +57,7 @@ public class MindDiary {
   private LocalDate deletedAt;
 
   @Builder
-  public MindDiary(Users users, String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate createdAt, LocalDate modifiedAt, LocalDate deletedAt){
+  public Diary(Users users, String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate createdAt, LocalDate modifiedAt, LocalDate deletedAt){
     this.users = users;
     this.workoutMood = workoutMood;
     this.workoutType = workoutType;
