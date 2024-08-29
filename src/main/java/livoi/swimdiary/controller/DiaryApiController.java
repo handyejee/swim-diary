@@ -1,8 +1,8 @@
 package livoi.swimdiary.controller;
 
-import livoi.swimdiary.domain.MindDiary;
-import livoi.swimdiary.dto.AddMindDiaryRequest;
-import livoi.swimdiary.service.MindDiaryService;
+import livoi.swimdiary.domain.Diary;
+import livoi.swimdiary.dto.AddDiaryRequest;
+import livoi.swimdiary.service.DiaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DiaryApiController {
 
-  private final MindDiaryService mindDiaryService;
+  private final DiaryService diaryService;
 
   @PostMapping("/mind-diary")
-  public ResponseEntity<MindDiary> addMoodDiary(@RequestBody AddMindDiaryRequest request){
-    MindDiary savedMindDiary = mindDiaryService.save(request);
+  public ResponseEntity<Diary> addMoodDiary(@RequestBody AddDiaryRequest request){
+    Diary savedDiary = diaryService.save(request);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(savedMindDiary);
+        .body(savedDiary);
   }
 
 }
