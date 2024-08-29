@@ -1,16 +1,15 @@
 package livoi.swimdiary.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import livoi.swimdiary.domain.MindDiary;
+import livoi.swimdiary.domain.Diary;
 import livoi.swimdiary.domain.Users;
-import livoi.swimdiary.dto.AddMindDiaryRequest;
-import livoi.swimdiary.repository.MindDiaryRepository;
+import livoi.swimdiary.dto.AddDiaryRequest;
+import livoi.swimdiary.repository.DiaryRepository;
 import livoi.swimdiary.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -39,17 +37,16 @@ class DiaryApiControllerTest {
   private WebApplicationContext context;
 
   @Autowired
-  private MindDiaryRepository mindDiaryRepository;
+  private DiaryRepository diaryRepository;
 
-  @MockBean
+  @Autowired
   private UsersRepository usersRepository;
 
   @BeforeEach
   public void mockMvcSetup() {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
         .build();
-    mindDiaryRepository.deleteAll();
-
+    diaryRepository.deleteAll();
   }
 
   @DisplayName("addMoodDiary : 감정일기 등록에 성공한다")
@@ -67,14 +64,16 @@ class DiaryApiControllerTest {
         .nickname("testyy")
         .build();
 
-    // UsersRepository의 save 메소드 호출 시, users 객체를 반환하도록 Mock 설정
+    Users savedUser = usersRepository.save(users);
+
     final String mood = "PROUD";
-    final AddMindDiaryRequest addMindDiaryRequest = AddMindDiaryRequest.builder()
-        .users(users)
+
+    final AddDiaryRequest addDiaryRequest = AddDiaryRequest.builder()
+        .userId(users.getUserId())
         .workoutMood(mood)
         .build();
 
-    final String requestBody = objectMapper.writeValueAsString(addMindDiaryRequest);
+    final String requestBody = objectMapper.writeValueAsString(addDiaryRequest);
 
     //감정일기 추가 API에 요청을 보낸다.
     //when
@@ -87,11 +86,11 @@ class DiaryApiControllerTest {
     //then
     result.andExpect(status().isCreated());
 
-    List<MindDiary> mindDiaries = mindDiaryRepository.findAll();
+    List<Diary> mindDiaries = diaryRepository.findAll();
 
     assertThat(mindDiaries.size()).isEqualTo(1);
     assertThat(mindDiaries.get(0).getWorkoutMood()).isEqualTo(mood);
-    assertThat(mindDiaries.get(0).getUsers()).isEqualTo(users);
+    assertThat(mindDiaries.get(0).getUsers().getUserId()).isEqualTo(savedUser.getUserId());
 
   }
 }
