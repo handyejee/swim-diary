@@ -1,5 +1,7 @@
 package livoi.swimdiary.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import livoi.swimdiary.domain.Diary;
 import livoi.swimdiary.domain.Users;
@@ -22,8 +24,11 @@ public class AddDiaryRequest {
 
   private Long diaryId;
   private Long userId;
+
+  @NotNull
   private String workoutMood;
   private String workoutType;
+  @Positive
   private Integer workoutCount;
   private String workoutLog;
   private LocalDate createdAt;

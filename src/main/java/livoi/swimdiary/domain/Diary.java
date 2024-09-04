@@ -32,7 +32,7 @@ public class Diary {
   private Long diaryId;
 
   @ManyToOne(cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "user_id") // FK 지정
+  @JoinColumn(name = "user_id", nullable = false) // FK 지정
   private Users users;
 
   @Column(name = "workout_mood", nullable = false)
