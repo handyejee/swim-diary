@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- *  감정일기 DTO
+ *  감정일기 등록을 위한 DTO
  *  감정 일기 등록시 필요한 항목들을 MoodDiary Entity와 매핑하는 DTO
  *  새로운 일기 항목을 서버에 등록할때 사용합니다.
  */
@@ -35,6 +35,7 @@ public class AddDiaryRequest {
 
   public Diary toEntity(Users users){
     return Diary.builder()
+        .diaryId(diaryId)
         .users(users)
         .workoutMood(workoutMood)
         .workoutType(workoutType)
