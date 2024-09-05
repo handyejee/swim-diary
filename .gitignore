@@ -36,8 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
-### fcm token ###
 swim-diary-e5c13-firebase-adminsdk-yootp-f748ac72e2.json
-
-### application setting ###
-application.yml
