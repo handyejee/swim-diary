@@ -57,7 +57,8 @@ public class Diary {
   private LocalDate deletedAt;
 
   @Builder
-  public Diary(Users users, String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate createdAt, LocalDate modifiedAt, LocalDate deletedAt){
+  public Diary(Long diaryId, Users users, String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate createdAt, LocalDate modifiedAt, LocalDate deletedAt){
+    this.diaryId = diaryId;
     this.users = users;
     this.workoutMood = workoutMood;
     this.workoutType = workoutType;
@@ -66,6 +67,14 @@ public class Diary {
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.deletedAt = deletedAt;
+  }
+
+  public void update(String workoutMood, String workoutType, Integer workoutCount, String workoutLog, LocalDate modifiedAt) {
+    this.workoutMood = workoutMood;
+    this.workoutType = workoutType;
+    this.workoutCount = workoutCount;
+    this.workoutLog = workoutLog;
+    this.modifiedAt = modifiedAt;
   }
 
   @PrePersist
