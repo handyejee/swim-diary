@@ -32,8 +32,6 @@ public class AddDiaryRequest {
   private Integer workoutCount;
   private String workoutLog;
   private LocalDate createdAt;
-  private LocalDate modifiedAt;
-  private LocalDate deletedAt;
 
   public Diary toEntity(Users users){
     return Diary.builder()
@@ -43,8 +41,6 @@ public class AddDiaryRequest {
         .workoutCount(workoutCount)
         .workoutLog(workoutLog)
         .createdAt(createdAt)
-        .modifiedAt(modifiedAt)
-        .deletedAt(deletedAt)
         .build();
   }
 }
