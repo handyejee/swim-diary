@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,6 +39,14 @@ public class DiaryApiController {
     UpdateDiaryResponseDto updatedDiary = diaryService.update(diaryId, request);
 
     return ResponseEntity.ok().body(updatedDiary);
+  }
+
+  @DeleteMapping("mind-diary/{diaryId}")
+  public ResponseEntity<Void> deleteDiary(@PathVariable long diaryId) {
+    diaryService.delete(diaryId);
+
+    return ResponseEntity.ok()
+        .build();
   }
 
 }
