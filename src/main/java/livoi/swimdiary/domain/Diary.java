@@ -31,7 +31,7 @@ public class Diary {
   @Column(name = "diary_id", updatable = false)
   private Long diaryId;
 
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne
   @JoinColumn(name = "user_id", nullable = false) // FK 지정
   private Users users;
 
