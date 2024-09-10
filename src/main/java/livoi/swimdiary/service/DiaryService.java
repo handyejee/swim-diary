@@ -57,5 +57,13 @@ public class DiaryService {
     return UpdateDiaryResponseDto.fromEntity(diary);
   }
 
+  /**
+   * 감정일기를 삭제합니다.
+   *
+   * @param diaryId 감정일기의 diaryId 값을 받아옵니다.
+   */
+  public void delete(long diaryId) {
+    diaryRepository.deleteById(diaryId);
+  }
 
 }
