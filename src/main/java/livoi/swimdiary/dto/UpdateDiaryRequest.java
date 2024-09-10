@@ -20,6 +20,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateDiaryRequest {
 
+  private Long diaryId;
+  private Long userId;
+
   @NotNull
   private String workoutMood;
   private String workoutType;
