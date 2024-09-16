@@ -1,35 +1,72 @@
 package livoi.swimdiary.service;
 
+import static java.time.temporal.ChronoUnit.HOURS;
+
+import java.time.Duration;
+import livoi.swimdiary.config.jwt.TokenProvider;
 import livoi.swimdiary.domain.Users;
 import livoi.swimdiary.dto.AddUserRequest;
+import livoi.swimdiary.dto.LoginUserRequest;
 import livoi.swimdiary.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * 사용자 기능을 위한 서비스 로직
+ * 사용자 정보를 조회하기 위한 서비스 로직 UserDetailsService 인터페이스를 구현합니다.
  */
-
 @RequiredArgsConstructor
 @Service
 public class UsersService {
 
   private final UsersRepository usersRepository;
+  private final UserDetailService userDetailService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final TokenProvider tokenProvider;
 
   /**
-   * 회원정보를 저장하는 서비스 로직입니다.
-   * @param dto 에서 저장할 사용자가 입력한 정보를 가지고 옵니다.
-   * @return 저장된 사용자의 정보를 반환합니다.
+   * 사용자를 등록하는 서비스로직
+   *
+   * @param request User 항목 dto 에서 가져온 사용자 정보
+   * @return 등록한 사용자 정보를 반환합니다.
    */
-  public Long save(AddUserRequest dto) {
-    return usersRepository.save(Users.builder()
-        .username(dto.getUsername())
-        .email(dto.getEmail())
-        .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-        .nickname(dto.getNickname())
-        .swimRoutine(dto.getSwimRoutine())
-        .build()).getUserId();
+  public Users saveUser(AddUserRequest request) {
+    try {
+      userDetailService.loadUserByUsername(request.getEmail());
+      throw new IllegalArgumentException("User with this email already exists");
+
+    } catch (UsernameNotFoundException e) {
+
+      Users users = request.toEntity(bCryptPasswordEncoder);
+      return usersRepository.save(users);
+    }
+  }
+
+  /**
+   * 사용자의 로그인을 처리하는 서비스 로직
+   *
+   * @param request 사용자의 로그인 정보 (이메일, 비밀번호)
+   * @return 로그인 정보가 일치할 경우 JWT 토큰 반환
+   */
+  public String signIn(LoginUserRequest request) {
+
+    Users users = usersRepository.findByEmail(request.getEmail())
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    if (!bCryptPasswordEncoder.matches(request.getPassword(), users.getPassword())) {
+      throw new IllegalArgumentException("Invalid password");
+    }
+
+    return tokenProvider.generateToken(users, Duration.of(2, HOURS));
+  }
+
+  /**
+   * 사용자를 삭제하는 서비스 로직
+   *
+   * @param userId 사용자의 고유번호
+   */
+  public void deleteUser(long userId){
+    usersRepository.deleteById(userId);
   }
 }
