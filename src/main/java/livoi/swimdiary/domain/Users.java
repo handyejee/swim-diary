@@ -44,7 +44,8 @@ public class Users implements UserDetails {
   private Integer swimRoutine;
 
   @Builder
-  public Users(String username, String email, String password, String nickname, Integer swimRoutine, String auth) {
+  public Users(Long userId, String username, String email, String password, String nickname, Integer swimRoutine, String auth) {
+    this.userId = userId;
     this.username = username;
     this.email = email;
     this.password = password;
@@ -69,21 +70,21 @@ public class Users implements UserDetails {
 
   @Override
   public boolean isAccountNonExpired() {
-    return UserDetails.super.isAccountNonExpired();
+    return true;
   }
 
   @Override
   public boolean isAccountNonLocked() {
-    return UserDetails.super.isAccountNonLocked();
+    return true;
   }
 
   @Override
   public boolean isCredentialsNonExpired() {
-    return UserDetails.super.isCredentialsNonExpired();
+    return true;
   }
 
   @Override
   public boolean isEnabled() {
-    return UserDetails.super.isEnabled();
+    return true;
   }
 }
