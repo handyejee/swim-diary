@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class UsersService {
 
   private final UsersRepository usersRepository;
-  private final UserDetailService userDetailService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final TokenProvider tokenProvider;
 
@@ -32,15 +31,12 @@ public class UsersService {
    * @return 등록한 사용자 정보를 반환합니다.
    */
   public Users saveUser(AddUserRequest request) {
-    try {
-      userDetailService.loadUserByUsername(request.getEmail());
-      throw new IllegalArgumentException("User with this email already exists");
+    if (usersRepository.existsByEmail(request.getEmail())){
+     throw new IllegalArgumentException("User email already exists.");
+   }
 
-    } catch (UsernameNotFoundException e) {
-
-      Users users = request.toEntity(bCryptPasswordEncoder);
-      return usersRepository.save(users);
-    }
+    Users users = request.toEntity(bCryptPasswordEncoder);
+    return usersRepository.save(users);
   }
 
   /**
