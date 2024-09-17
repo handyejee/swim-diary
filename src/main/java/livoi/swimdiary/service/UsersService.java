@@ -31,7 +31,7 @@ public class UsersService {
    * @return 등록한 사용자 정보를 반환합니다.
    */
   public Users saveUser(AddUserRequest request) {
-    if (usersRepository.existsByEmail(request.getEmail())){
+    if (usersRepository.existsByEmail(request.getEmail())) {
      throw new IllegalArgumentException("User email already exists.");
    }
 

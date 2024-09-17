@@ -41,7 +41,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter{
     String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
     String token = getAccessToken(authorizationHeader);
 
-    if(tokenProvider.validToken(token)){
+    if (tokenProvider.validToken(token)) {
       Authentication authentication = tokenProvider.getAuthentication(token);
       SecurityContextHolder.getContext().setAuthentication(authentication);
     }
@@ -55,7 +55,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter{
    * @return Bearer 토큰이 있는 경우 토큰 문자열을 반환, 없으면 null 반환
    */
   private String getAccessToken(String authorizationHeader){
-    if(authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
+    if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
       return authorizationHeader.substring(TOKEN_PREFIX.length());
     }
     return null;
