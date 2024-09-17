@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,7 +43,7 @@ public class Users implements UserDetails {
   private Integer swimRoutine;
 
   @Builder
-  public Users(Long userId, String username, String email, String password, String nickname, Integer swimRoutine, String auth) {
+  public Users(Long userId, String username, String email, String password, String nickname, Integer swimRoutine) {
     this.userId = userId;
     this.username = username;
     this.email = email;
@@ -60,7 +59,7 @@ public class Users implements UserDetails {
 
   @Override
   public String getUsername(){
-    return email;
+    return username;
   }
 
   @Override
