@@ -35,7 +35,6 @@ public class AddDiaryRequest {
 
   public Diary toEntity(Users users){
     return Diary.builder()
-        .diaryId(diaryId)
         .users(users)
         .workoutMood(workoutMood)
         .workoutType(workoutType)
