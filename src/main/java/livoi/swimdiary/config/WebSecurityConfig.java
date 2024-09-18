@@ -35,7 +35,6 @@ public class WebSecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/login", "/signup").permitAll()
-            .requestMatchers("/mind-diary", "/mind-diary/").authenticated()
             .anyRequest().authenticated()
         )
         .addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
