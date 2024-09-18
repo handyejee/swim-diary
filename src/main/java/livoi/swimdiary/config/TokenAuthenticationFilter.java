@@ -38,6 +38,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter{
       HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
+    String requestURI = request.getRequestURI();
+
+    if (requestURI.equals("/signup") || requestURI.equals("/login")) {
+      filterChain.doFilter(request, response);
+      return; // 필터 건너뛰기
+    }
+
     String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
     String token = getAccessToken(authorizationHeader);
 
