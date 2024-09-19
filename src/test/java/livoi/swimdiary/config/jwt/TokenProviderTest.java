@@ -7,15 +7,19 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Date;
 import javax.crypto.SecretKey;
 import livoi.swimdiary.domain.Users;
 import livoi.swimdiary.repository.UsersRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
 
+@Slf4j
 @SpringBootTest
 class TokenProviderTest {
 
@@ -75,6 +79,22 @@ class TokenProviderTest {
 
     // then
     assertThat(result).isTrue();
+  }
 
+  @DisplayName("validToken : 만료된 토큰으로 토큰 검증 시 유효성 검사에 실패한다.")
+  @Test
+  void validToken_invalidToken() {
+    //given
+    String token = JwtFactory.builder()
+        .expiration(
+            new Date(new Date().getTime() - Duration.ofDays(7).toMillis())) // 유효한 토큰은 현재 + 14
+        .build()
+        .createToken(jwtProperties);
+
+    //when
+    boolean result = tokenProvider.validToken(token);
+
+    //then
+    assertThat(result).isFalse();
   }
 }
