@@ -39,5 +39,6 @@ out/
 ### firebase api key ###
 swim-diary-e5c13-firebase-adminsdk-yootp-f748ac72e2.json
 
-### application.yml ###
+# Ignore environment-specific configuration files
 application.yml
+application.properties
