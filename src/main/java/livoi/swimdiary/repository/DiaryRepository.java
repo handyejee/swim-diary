@@ -12,4 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
   List<Diary> findAllByCreatedAtBetween(LocalDate startDate, LocalDate endDate);
+
+  List<Diary> findAllByCreatedAt(LocalDate createdAt);
  }
