@@ -14,6 +14,7 @@ import livoi.swimdiary.service.DiaryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,10 +51,17 @@ public class DiaryApiController {
     return ResponseEntity.ok().body(updatedDiary);
   }
 
+  @GetMapping("/mind-diary")
+  public ResponseEntity<List<GetDiaryResponseDto>> getDiaryOfToday() {
+    List<GetDiaryResponseDto> diaries = diaryService.getDiaryOfToday();
+
+    return ResponseEntity.ok(diaries);
+  }
+
   @GetMapping("/mind-diaries")
   public ResponseEntity<List<GetDiaryResponseDto>> getDiaries(
-      @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-      @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+      @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
+      @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate endDate
   ) {
     List<GetDiaryResponseDto> diaries = diaryService.getDiaryByDate(startDate, endDate);
 
