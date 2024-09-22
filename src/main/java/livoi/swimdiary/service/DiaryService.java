@@ -14,7 +14,6 @@ import livoi.swimdiary.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * 감정일기 기능을 위한 서비스 로직
@@ -60,6 +59,20 @@ public class DiaryService {
         request.getWorkoutLog(), request.getModifiedAt());
 
     return UpdateDiaryResponseDto.fromEntity(diary);
+  }
+
+  /**
+   * 오늘 기준으로 등록된 감정일기를 조회합니다.
+   *
+   * @return 감정일기 목록을 조회한 Diary 엔티티의 GetDiaryResponseDto를 리스트로 변환해 반환
+   */
+  public List<GetDiaryResponseDto> getDiaryOfToday(){
+    LocalDate today = LocalDate.now();
+    List<Diary> diaryOfToday = diaryRepository.findAllByCreatedAt(today);
+
+    return diaryOfToday.stream()
+        .map(GetDiaryResponseDto::fromEntity)
+        .collect(Collectors.toList());
   }
 
   /**
