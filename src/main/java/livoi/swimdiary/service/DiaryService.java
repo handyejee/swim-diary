@@ -1,6 +1,7 @@
 package livoi.swimdiary.service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 import livoi.swimdiary.domain.Diary;
@@ -83,7 +84,9 @@ public class DiaryService {
    * @return 감정일기 목록을 조회한 Diary 엔티티의 GetDiaryResponseDto를 리스트로 변환해 반환
    */
   public List<GetDiaryResponseDto> getDiaryByDate(LocalDate startDate, LocalDate endDate) {
-    validateDate(startDate, endDate);
+    if (startDate.isAfter(endDate)) {
+      throw new IllegalArgumentException("Start date cannot be after end date.");
+    }
     List<Diary> diaries = diaryRepository.findAllByCreatedAtBetween(startDate, endDate);
 
     return diaries.stream()
@@ -91,16 +94,17 @@ public class DiaryService {
         .collect(Collectors.toList());
   }
 
-  /**
-   * 검색 시작일이 검색 종료일보다 빠른 날짜일 경우 예외가 발생합니다.
-   *
-   * @param startDate 검색 시작 일자
-   * @param endDate 검색 종료 일자
-   */
-  public void validateDate(LocalDate startDate, LocalDate endDate){
-    if (startDate.isAfter(endDate)) {
-      throw new IllegalArgumentException("Start date cannot be after end date.");
-    }
+  public List<GetDiaryResponseDto> getDiaryByMonth(YearMonth yearMonth){
+    // 현재 일 기준 2년 전보다 전을 조회하면 예외 발생
+
+    LocalDate startDate = yearMonth.atDay(1); // 입력 받은 월의 첫번째 날
+    LocalDate endDate = yearMonth.atEndOfMonth(); // 입력 받은 월의 마지막 날
+
+    List<Diary> diaryOfMonth = diaryRepository.findAllByCreatedAtBetween(startDate, endDate);
+
+    return diaryOfMonth.stream()
+        .map(GetDiaryResponseDto::fromEntity)
+        .collect(Collectors.toList());
   }
 
 /**
