@@ -14,6 +14,10 @@ import livoi.swimdiary.dto.UpdateDiaryResponseDto;
 import livoi.swimdiary.service.DiaryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
@@ -55,27 +59,33 @@ public class DiaryApiController {
   }
 
   @GetMapping("/today")
-  public ResponseEntity<List<GetDiaryResponseDto>> getDiaryOfToday() {
-    List<GetDiaryResponseDto> diaries = diaryService.getDiaryOfToday();
+  public ResponseEntity<Page<GetDiaryResponseDto>> getDiaryOfToday(@PageableDefault(size = 5) Pageable pageable) {
+    Page<GetDiaryResponseDto> diaries = diaryService.getDiaryOfToday(pageable);
 
     return ResponseEntity.ok(diaries);
   }
 
   @GetMapping("/date")
-  public ResponseEntity<List<GetDiaryResponseDto>> getDiaryByDate(
+  public ResponseEntity<Page<GetDiaryResponseDto>> getDiaryByDate(
       @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
-      @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate endDate
+      @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate endDate,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "5") int size
   ) {
-    List<GetDiaryResponseDto> diaries = diaryService.getDiaryByDate(startDate, endDate);
+    Pageable pageable = PageRequest.of(page, size);
+    Page<GetDiaryResponseDto> diaries = diaryService.getDiaryByDate(startDate, endDate, pageable);
 
     return ResponseEntity.ok(diaries);
   }
 
   @GetMapping("/month")
-  public ResponseEntity<List<GetDiaryResponseDto>> getDiaryByMonth(
-      @RequestParam @NotNull @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth
+  public ResponseEntity<Page<GetDiaryResponseDto>> getDiaryByMonth(
+      @RequestParam @NotNull @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "5") int size
   ){
-    List<GetDiaryResponseDto> diaryOfMonth = diaryService.getDiaryByMonth(yearMonth);
+    Pageable pageable = PageRequest.of(page, size);
+    Page<GetDiaryResponseDto> diaryOfMonth = diaryService.getDiaryByMonth(yearMonth, pageable);
 
     return ResponseEntity.ok(diaryOfMonth);
   }
