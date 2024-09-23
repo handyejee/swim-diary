@@ -2,6 +2,7 @@ package livoi.swimdiary.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import livoi.swimdiary.domain.Diary;
@@ -13,6 +14,9 @@ import livoi.swimdiary.dto.UpdateDiaryResponseDto;
 import livoi.swimdiary.repository.DiaryRepository;
 import livoi.swimdiary.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 감정일기를 등록, 수정, 삭제하고 조회합니다.
  */
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DiaryService {
@@ -67,13 +72,11 @@ public class DiaryService {
    *
    * @return 감정일기 목록을 조회한 Diary 엔티티의 GetDiaryResponseDto를 리스트로 변환해 반환
    */
-  public List<GetDiaryResponseDto> getDiaryOfToday(){
+  public Page<GetDiaryResponseDto> getDiaryOfToday(Pageable pageable){
     LocalDate today = LocalDate.now();
-    List<Diary> diaryOfToday = diaryRepository.findAllByCreatedAt(today);
+    Page<Diary> diaryOfToday = diaryRepository.findAllByCreatedAt(today, pageable);
 
-    return diaryOfToday.stream()
-        .map(GetDiaryResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return diaryOfToday.map(GetDiaryResponseDto::fromEntity);
   }
 
   /**
@@ -83,28 +86,39 @@ public class DiaryService {
    * @param endDate 검색 종료 일자
    * @return 감정일기 목록을 조회한 Diary 엔티티의 GetDiaryResponseDto를 리스트로 변환해 반환
    */
-  public List<GetDiaryResponseDto> getDiaryByDate(LocalDate startDate, LocalDate endDate) {
+  public Page<GetDiaryResponseDto> getDiaryByDate(LocalDate startDate, LocalDate endDate, Pageable pageable) {
     if (startDate.isAfter(endDate)) {
       throw new IllegalArgumentException("Start date cannot be after end date.");
     }
-    List<Diary> diaries = diaryRepository.findAllByCreatedAtBetween(startDate, endDate);
+    Page<Diary> diaries = diaryRepository.findAllByCreatedAtBetween(startDate, endDate, pageable);
 
-    return diaries.stream()
-        .map(GetDiaryResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return diaries.map(GetDiaryResponseDto::fromEntity);
   }
 
-  public List<GetDiaryResponseDto> getDiaryByMonth(YearMonth yearMonth){
-    // 현재 일 기준 2년 전보다 전을 조회하면 예외 발생
+  /**
+   * 사용자가 조회한 연도와 월에 작성한 감정일기를 조회합니다.
+   *
+   * @param yearMonth 사용자가 조회한 연도-월
+   * @param pageable 페이지 정보
+   * @return 연도와 월 기반으로 조회한 값을 페이지별로
+   */
+  public Page<GetDiaryResponseDto> getDiaryByMonth(YearMonth yearMonth, Pageable pageable){
+    YearMonth twoYearsAgo = YearMonth.now().minus(2, ChronoUnit.YEARS);
+    YearMonth currentYearMonth = YearMonth.now();
+
+    log.info(("currentYearMonth {}"), currentYearMonth);
+    log.info("twoYearsAgo {}", twoYearsAgo);
+
+    if (yearMonth.isBefore(twoYearsAgo)|| yearMonth.isAfter(currentYearMonth)) {
+      throw new IllegalArgumentException("The range that can be viewed is from 2 years ago to the present.");
+    }
 
     LocalDate startDate = yearMonth.atDay(1); // 입력 받은 월의 첫번째 날
     LocalDate endDate = yearMonth.atEndOfMonth(); // 입력 받은 월의 마지막 날
 
-    List<Diary> diaryOfMonth = diaryRepository.findAllByCreatedAtBetween(startDate, endDate);
+    Page<Diary> diaryOfMonth = diaryRepository.findAllByCreatedAtBetween(startDate, endDate, pageable);
 
-    return diaryOfMonth.stream()
-        .map(GetDiaryResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return diaryOfMonth.map(GetDiaryResponseDto::fromEntity);
   }
 
 /**
