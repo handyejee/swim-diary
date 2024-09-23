@@ -1,13 +1,22 @@
 package livoi.swimdiary.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
 import livoi.swimdiary.domain.Diary;
 import livoi.swimdiary.domain.Users;
 import livoi.swimdiary.dto.AddDiaryRequest;
+import livoi.swimdiary.dto.GetDiaryResponseDto;
 import livoi.swimdiary.dto.UpdateDiaryRequest;
 import livoi.swimdiary.dto.UpdateDiaryResponseDto;
 import livoi.swimdiary.repository.DiaryRepository;
 import livoi.swimdiary.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 감정일기를 등록, 수정, 삭제하고 조회합니다.
  */
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DiaryService {
@@ -58,12 +68,66 @@ public class DiaryService {
   }
 
   /**
-   * 감정일기를 삭제합니다.
+   * 오늘 기준으로 등록된 감정일기를 조회합니다.
    *
-   * @param diaryId 감정일기의 diaryId 값을 받아옵니다.
+   * @return 감정일기 목록을 조회한 Diary 엔티티의 GetDiaryResponseDto를 리스트로 변환해 반환
    */
-  public void delete(long diaryId) {
-    diaryRepository.deleteById(diaryId);
+  public Page<GetDiaryResponseDto> getDiaryOfToday(Pageable pageable){
+    LocalDate today = LocalDate.now();
+    Page<Diary> diaryOfToday = diaryRepository.findAllByCreatedAt(today, pageable);
+
+    return diaryOfToday.map(GetDiaryResponseDto::fromEntity);
   }
+
+  /**
+   * 사용자가 선택한 날짜 기준으로 감정일기를 조회합니다.
+   *
+   * @param startDate 검색 시작 일자
+   * @param endDate 검색 종료 일자
+   * @return 감정일기 목록을 조회한 Diary 엔티티의 GetDiaryResponseDto를 리스트로 변환해 반환
+   */
+  public Page<GetDiaryResponseDto> getDiaryByDate(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+    if (startDate.isAfter(endDate)) {
+      throw new IllegalArgumentException("Start date cannot be after end date.");
+    }
+    Page<Diary> diaries = diaryRepository.findAllByCreatedAtBetween(startDate, endDate, pageable);
+
+    return diaries.map(GetDiaryResponseDto::fromEntity);
+  }
+
+  /**
+   * 사용자가 조회한 연도와 월에 작성한 감정일기를 조회합니다.
+   *
+   * @param yearMonth 사용자가 조회한 연도-월
+   * @param pageable 페이지 정보
+   * @return 연도와 월 기반으로 조회한 값을 페이지별로
+   */
+  public Page<GetDiaryResponseDto> getDiaryByMonth(YearMonth yearMonth, Pageable pageable){
+    YearMonth twoYearsAgo = YearMonth.now().minus(2, ChronoUnit.YEARS);
+    YearMonth currentYearMonth = YearMonth.now();
+
+    log.info(("currentYearMonth {}"), currentYearMonth);
+    log.info("twoYearsAgo {}", twoYearsAgo);
+
+    if (yearMonth.isBefore(twoYearsAgo)|| yearMonth.isAfter(currentYearMonth)) {
+      throw new IllegalArgumentException("The range that can be viewed is from 2 years ago to the present.");
+    }
+
+    LocalDate startDate = yearMonth.atDay(1); // 입력 받은 월의 첫번째 날
+    LocalDate endDate = yearMonth.atEndOfMonth(); // 입력 받은 월의 마지막 날
+
+    Page<Diary> diaryOfMonth = diaryRepository.findAllByCreatedAtBetween(startDate, endDate, pageable);
+
+    return diaryOfMonth.map(GetDiaryResponseDto::fromEntity);
+  }
+
+/**
+ * 감정일기를 삭제합니다.
+ *
+ * @param diaryId 감정일기의 diaryId 값을 받아옵니다.
+ */
+public void delete(long diaryId) {
+  diaryRepository.deleteById(diaryId);
+}
 
 }
