@@ -59,7 +59,7 @@ public class DiaryApiController {
   }
 
   @GetMapping("/today")
-  public ResponseEntity<Page<GetDiaryResponseDto>> getDiaryOfToday(@PageableDefault(size = 5) Pageable pageable) {
+  public ResponseEntity<Page<GetDiaryResponseDto>> getDiaryOfToday(@PageableDefault() Pageable pageable) {
     Page<GetDiaryResponseDto> diaries = diaryService.getDiaryOfToday(pageable);
 
     return ResponseEntity.ok(diaries);
@@ -70,7 +70,7 @@ public class DiaryApiController {
       @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
       @RequestParam @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate endDate,
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "5") int size
+      @RequestParam(defaultValue = "10") int size
   ) {
     Pageable pageable = PageRequest.of(page, size);
     Page<GetDiaryResponseDto> diaries = diaryService.getDiaryByDate(startDate, endDate, pageable);
@@ -82,7 +82,7 @@ public class DiaryApiController {
   public ResponseEntity<Page<GetDiaryResponseDto>> getDiaryByMonth(
       @RequestParam @NotNull @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth,
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "5") int size
+      @RequestParam(defaultValue = "10") int size
   ){
     Pageable pageable = PageRequest.of(page, size);
     Page<GetDiaryResponseDto> diaryOfMonth = diaryService.getDiaryByMonth(yearMonth, pageable);
